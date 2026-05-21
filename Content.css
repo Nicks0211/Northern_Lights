@@ -1,0 +1,4 @@
+#nexus-ai-floater input:focus {
+  border-color: #7C3AED !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
+}

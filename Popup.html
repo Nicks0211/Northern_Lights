@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northern Lights</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg-void: #060610;
+    --bg-deep: #0A0A1E;
+    --bg-panel: #0F0F2A;
+    --bg-card: #141430;
+    --bg-hover: #1A1A3A;
+    --purple-core: #7C3AED;
+    --purple-bright: #9B5CFF;
+    --purple-glow: #A78BFA;
+    --purple-muted: #4C1D95;
+    --purple-dim: #2D1B69;
+    --border-subtle: rgba(124,58,237,0.15);
+    --border-active: rgba(124,58,237,0.5);
+    --text-primary: #F0EEFF;
+    --text-secondary: #9090C0;
+    --text-muted: #5050800;
+    --accent-green: #22C55E;
+    --accent-red: #EF4444;
+    --accent-amber: #F59E0B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 380px;
+    min-height: 560px;
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 16px 20px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #7C3AED, #A78BFA);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white;
+    letter-spacing: -0.5px;
+    box-shadow: 0 0 16px rgba(124,58,237,0.4);
+  }
+  .logo-text {
+    font-size: 18px; font-weight: 700;
+    letter-spacing: 0.12em;
+    background: linear-gradient(90deg, #A78BFA, #E0C3FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo-sub {
+    font-size: 10px; color: var(--text-secondary);
+    letter-spacing: 0.08em;
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .status-bar {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .stat-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px; color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-chip .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .dot-green { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+  .dot-purple { background: var(--purple-bright); box-shadow: 0 0 6px var(--purple-bright); }
+  .stat-num { color: var(--text-primary); font-weight: 600; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 8px;
+    gap: 2px;
+  }
+  .tab {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 10px 6px 8px;
+    cursor: pointer;
+    border: none; background: none;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .tab:hover { color: var(--purple-glow); }
+  .tab.active {
+    color: var(--purple-bright);
+    border-bottom-color: var(--purple-bright);
+  }
+  .tab.active svg { stroke: var(--purple-bright); }
+
+  /* Content areas */
+  .content { padding: 16px 18px; display: none; }
+  .content.active { display: block; }
+
+  /* Section label */
+  .section-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.15em;
+    color: var(--purple-glow); text-transform: uppercase;
+    margin-bottom: 10px; margin-top: 16px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* Toggle rows */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+  }
+  .toggle-row:hover { border-color: var(--border-active); }
+  .toggle-left { display: flex; align-items: center; gap: 10px; }
+  .toggle-icon {
+    width: 34px; height: 34px;
+    background: var(--bg-hover);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .toggle-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .toggle-desc { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+
+  /* Switch */
+  .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0;
+    background: var(--bg-hover);
+    border: 1px solid var(--border-subtle);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .slider::before {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    left: 2px; top: 2px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    transition: 0.25s;
+  }
+  input:checked + .slider {
+    background: rgba(124,58,237,0.2);
+    border-color: var(--purple-core);
+  }
+  input:checked + .slider::before {
+    background: var(--purple-bright);
+    transform: translateX(18px);
+    box-shadow: 0 0 8px rgba(155,92,255,0.6);
+  }
+
+  /* Blocked counter */
+  .blocked-banner {
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(167,139,250,0.05));
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .blocked-num {
+    font-size: 42px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    background: linear-gradient(90deg, #A78BFA, #E0C3FF);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1;
+  }
+  .blocked-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.05em; }
+
+  /* AI Chat */
+  .ai-chat-area {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 12px;
+    height: 180px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .ai-chat-area::-webkit-scrollbar { width: 4px; }
+  .ai-chat-area::-webkit-scrollbar-track { background: transparent; }
+  .ai-chat-area::-webkit-scrollbar-thumb { background: var(--border-active); border-radius: 2px; }
+  .msg { max-width: 85%; padding: 8px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; }
+  .msg-user {
+    background: var(--purple-dim);
+    border: 1px solid var(--border-active);
+    color: var(--purple-glow);
+    align-self: flex-end;
+  }
+  .msg-ai {
+    background: var(--bg-hover);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    align-self: flex-start;
+  }
+  .msg-system {
+    text-align: center; color: var(--text-secondary);
+    font-size: 11px; font-style: italic;
+    align-self: center;
+  }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--border-active); }
+  .chat-input::placeholder { color: var(--text-secondary); }
+  .btn-send {
+    background: var(--purple-core);
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-send:hover { background: var(--purple-bright); }
+  .btn-send:active { transform: scale(0.96); }
+
+  /* Bot list */
+  .bot-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .bot-card:hover { border-color: var(--border-active); background: var(--bg-hover); }
+  .bot-avatar {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .bot-info { flex: 1; }
+  .bot-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .bot-desc { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .bot-status {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .bot-status.active { background: rgba(34,197,94,0.1); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.3); }
+  .bot-status.idle { background: rgba(144,144,192,0.08); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+
+  /* Theme selector */
+  .theme-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 14px;
+  }
+  .theme-option {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .theme-option:hover { border-color: var(--border-active); }
+  .theme-option.selected { border-color: var(--purple-bright); }
+  .theme-preview { height: 54px; }
+  .theme-name {
+    background: var(--bg-card);
+    padding: 6px 8px;
+    font-size: 11px; font-weight: 600; color: var(--text-primary);
+  }
+  .theme-check {
+    position: absolute; top: 6px; right: 6px;
+    width: 18px; height: 18px;
+    background: var(--purple-bright);
+    border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    color: white; font-size: 11px;
+  }
+  .theme-option.selected .theme-check { display: flex; }
+
+  /* CSS Editor */
+  .css-editor {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple-glow);
+    width: 100%; height: 100px;
+    resize: none; outline: none;
+    line-height: 1.5;
+  }
+  .css-editor:focus { border-color: var(--border-active); }
+  .css-editor::placeholder { color: var(--text-secondary); }
+
+  /* Automation buttons */
+  .auto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .auto-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 14px 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .auto-btn:hover { border-color: var(--border-active); background: var(--bg-hover); }
+  .auto-btn:active { transform: scale(0.97); }
+  .auto-icon { font-size: 22px; }
+  .auto-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-align: center; line-height: 1.3; }
+
+  /* Action log */
+  .log-area {
+    background: var(--bg-void);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 12px;
+    height: 80px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .log-entry { margin-bottom: 4px; }
+  .log-entry .ts { color: var(--purple-dim); margin-right: 6px; }
+  .log-entry .ok { color: var(--accent-green); }
+  .log-entry .err { color: var(--accent-red); }
+
+  /* Btn primary */
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--purple-core), var(--purple-bright));
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+    letter-spacing: 0.03em;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 6px;
+  }
+  .btn-secondary:hover { border-color: var(--border-active); color: var(--text-primary); }
+
+  /* Input */
+  .input-field {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: var(--border-active); }
+  .input-field::placeholder { color: var(--text-secondary); }
+  .input-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; display: block; }
+
+  /* Scrollbar */
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
+  .content { max-height: 460px; overflow-y: auto; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo-mark">NL</div>
+    <span class="logo-text">Northern Lights</span>
+    <span class="logo-sub">v1.0 BETA</span>
+  </div>
+  <div class="status-bar">
+    <div class="stat-chip">
+      <div class="dot dot-green"></div>
+      <span>Ativo</span>
+    </div>
+    <div class="stat-chip">
+      <div class="dot dot-purple"></div>
+      <span class="stat-num" id="blocked-mini">0</span>
+      <span>bloqueados</span>
+    </div>
+    <div class="stat-chip" id="site-chip" style="margin-left:auto;">
+      <span id="current-site" style="color:var(--text-secondary);">...</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="shield">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Bloqueio
+  </button>
+  <button class="tab" data-tab="ai">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    IA
+  </button>
+  <button class="tab" data-tab="bots">
+    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+    Bots
+  </button>
+  <button class="tab" data-tab="theme">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20 10 10 0 000-20"/></svg>
+    Tema
+  </button>
+  <button class="tab" data-tab="auto">
+    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    Auto
+  </button>
+</div>
+
+<!-- SHIELD TAB -->
+<div class="content active" id="tab-shield">
+  <div class="blocked-banner">
+    <div class="blocked-num" id="blocked-count">0</div>
+    <div class="blocked-label">ANÚNCIOS BLOQUEADOS HOJE</div>
+  </div>
+
+  <div class="section-label">Proteções</div>
+
+  <div class="toggle-row">
+    <div class="toggle-left">
+      <div class="toggle-icon">🚫</div>
+      <div>
+        <div class="toggle-title">Bloqueador de Anúncios</div>
+        <div class="toggle-desc">Remove ads, banners e pop-ups</div>
+      </div>
+    </div>
+    <label class="switch"><input type="checkbox" id="toggle-ads" checked><span class="slider"></span></label>
+  </div>
+
+  <div class="toggle-row">
+    <div class="toggle-left">
+      <div class="toggle-icon">👁️</div>
+      <div>
+        <div class="toggle-title">Anti-Rastreamento</div>
+        <div class="toggle-desc">Bloqueia pixels e trackers</div>
+      </div>
+    </div>
+    <label class="switch"><input type="checkbox" id="toggle-track" checked><span class="slider"></span></label>
+  </div>
+
+  <div class="toggle-row">
+    <div class="toggle-left">
+      <div class="toggle-icon">🍪</div>
+      <div>
+        <div class="toggle-title">Ocultar Banners de Cookie</div>
+        <div class="toggle-desc">Remove popups de LGPD</div>
+      </div>
+    </div>
+    <label class="switch"><input type="checkbox" id="toggle-cookies" checked><span class="slider"></span></label>
+  </div>
+
+  <div class="section-label">Bloqueio Manual</div>
+  <button class="btn-secondary" id="btn-pick-element">🎯 Selecionar Elemento para Bloquear</button>
+</div>
+
+<!-- AI TAB -->
+<div class="content" id="tab-ai">
+  <div class="section-label">Configuração</div>
+  <label class="input-label">Chave de API Anthropic</label>
+  <input type="password" class="input-field" id="api-key" placeholder="sk-ant-...">
+
+  <div class="section-label">Chat com IA</div>
+  <div class="ai-chat-area" id="chat-area">
+    <div class="msg msg-system">NEXUS IA pronta. Pergunte sobre qualquer coisa.</div>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" class="chat-input" id="chat-input" placeholder="Faça uma pergunta...">
+    <button class="btn-send" id="btn-ask">↑</button>
+  </div>
+
+  <div class="section-label" style="margin-top:12px;">Ações Rápidas</div>
+  <div class="auto-grid">
+    <button class="auto-btn" data-quick="Resuma o conteúdo desta página para mim">
+      <span class="auto-icon">📝</span>
+      <span class="auto-label">Resumir Página</span>
+    </button>
+    <button class="auto-btn" data-quick="Explique os termos de serviço desta página de forma simples">
+      <span class="auto-icon">📋</span>
+      <span class="auto-label">Explicar Termos</span>
+    </button>
+    <button class="auto-btn" data-quick="Quais dados esta página está coletando sobre mim?">
+      <span class="auto-icon">🔍</span>
+      <span class="auto-label">Analisar Privacidade</span>
+    </button>
+    <button class="auto-btn" data-quick="Traduza o conteúdo selecionado para português">
+      <span class="auto-icon">🌐</span>
+      <span class="auto-label">Traduzir</span>
+    </button>
+  </div>
+</div>
+
+<!-- BOTS TAB -->
+<div class="content" id="tab-bots">
+  <div class="section-label">Bots Disponíveis</div>
+
+  <div class="bot-card" id="bot-autofill">
+    <div class="bot-avatar" style="background:rgba(124,58,237,0.15);">🤖</div>
+    <div class="bot-info">
+      <div class="bot-name">AutoFill Bot</div>
+      <div class="bot-desc">Preenche formulários automaticamente</div>
+    </div>
+    <span class="bot-status idle" id="status-autofill">PARADO</span>
+  </div>
+
+  <div class="bot-card" id="bot-scroll">
+    <div class="bot-avatar" style="background:rgba(34,197,94,0.1);">📜</div>
+    <div class="bot-info">
+      <div class="bot-name">Scroll Bot</div>
+      <div class="bot-desc">Rolagem automática e leitura</div>
+    </div>
+    <span class="bot-status idle" id="status-scroll">PARADO</span>
+  </div>
+
+  <div class="bot-card" id="bot-monitor">
+    <div class="bot-avatar" style="background:rgba(245,158,11,0.1);">👀</div>
+    <div class="bot-info">
+      <div class="bot-name">Monitor Bot</div>
+      <div class="bot-desc">Detecta mudanças na página</div>
+    </div>
+    <span class="bot-status idle" id="status-monitor">PARADO</span>
+  </div>
+
+  <div class="bot-card" id="bot-clicker">
+    <div class="bot-avatar" style="background:rgba(239,68,68,0.1);">🖱️</div>
+    <div class="bot-info">
+      <div class="bot-name">Click Bot</div>
+      <div class="bot-desc">Automatiza cliques repetitivos</div>
+    </div>
+    <span class="bot-status idle" id="status-clicker">PARADO</span>
+  </div>
+
+  <div class="section-label">Log</div>
+  <div class="log-area" id="bot-log">
+    <div class="log-entry"><span class="ts">[NEXUS]</span> Bots carregados e prontos.</div>
+  </div>
+</div>
+
+<!-- THEME TAB -->
+<div class="content" id="tab-theme">
+  <div class="section-label">Temas Predefinidos</div>
+  <div class="theme-grid">
+    <div class="theme-option selected" data-theme="dark-nexus">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#060610,#0F0F2A);"></div>
+      <div class="theme-name">Dark Nexus</div>
+      <div class="theme-check">✓</div>
+    </div>
+    <div class="theme-option" data-theme="cyberpunk">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#000000,#1A0033,#00FFFF22);"></div>
+      <div class="theme-name">Cyberpunk</div>
+      <div class="theme-check">✓</div>
+    </div>
+    <div class="theme-option" data-theme="midnight">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0A0A0A,#1A1A2E);"></div>
+      <div class="theme-name">Midnight</div>
+      <div class="theme-check">✓</div>
+    </div>
+    <div class="theme-option" data-theme="aurora">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0D1B2A,#1B4332,#2D1B69);"></div>
+      <div class="theme-name">Aurora</div>
+      <div class="theme-check">✓</div>
+    </div>
+  </div>
+
+  <div class="toggle-row">
+    <div class="toggle-left">
+      <div class="toggle-icon">🎨</div>
+      <div>
+        <div class="toggle-title">Aplicar Tema nos Sites</div>
+        <div class="toggle-desc">Modifica aparência das páginas</div>
+      </div>
+    </div>
+    <label class="switch"><input type="checkbox" id="toggle-theme"><span class="slider"></span></label>
+  </div>
+
+  <div class="section-label">CSS Personalizado</div>
+  <textarea class="css-editor" id="custom-css" placeholder="/* Escreva seu CSS aqui */
+body { background: #000 !important; }
+* { font-family: monospace !important; }"></textarea>
+  <button class="btn-primary" id="btn-apply-css">Aplicar CSS</button>
+</div>
+
+<!-- AUTOMATION TAB -->
+<div class="content" id="tab-auto">
+  <div class="section-label">Automações Rápidas</div>
+  <div class="auto-grid">
+    <button class="auto-btn" id="run-scroll">
+      <span class="auto-icon">⬇️</span>
+      <span class="auto-label">Rolar até o Final</span>
+    </button>
+    <button class="auto-btn" id="run-screenshot">
+      <span class="auto-icon">📸</span>
+      <span class="auto-label">Capturar Tela</span>
+    </button>
+    <button class="auto-btn" id="run-print">
+      <span class="auto-icon">🖨️</span>
+      <span class="auto-label">Imprimir Página</span>
+    </button>
+    <button class="auto-btn" id="run-readmode">
+      <span class="auto-icon">📖</span>
+      <span class="auto-label">Modo Leitura</span>
+    </button>
+    <button class="auto-btn" id="run-zoomin">
+      <span class="auto-icon">🔍</span>
+      <span class="auto-label">Zoom +</span>
+    </button>
+    <button class="auto-btn" id="run-copy-all">
+      <span class="auto-icon">📋</span>
+      <span class="auto-label">Copiar Texto</span>
+    </button>
+  </div>
+
+  <div class="section-label">Agendador</div>
+  <label class="input-label">Executar automação a cada (segundos)</label>
+  <input type="number" class="input-field" id="auto-interval" value="30" min="5">
+  <select class="input-field" id="auto-action" style="cursor:pointer;appearance:none;">
+    <option value="">Selecione uma ação...</option>
+    <option value="scroll">Rolar página</option>
+    <option value="refresh">Atualizar página</option>
+    <option value="screenshot">Capturar tela</option>
+  </select>
+  <button class="btn-primary" id="btn-schedule">▶ Iniciar Agendamento</button>
+  <button class="btn-secondary" id="btn-stop-schedule" style="display:none;">■ Parar Agendamento</button>
+
+  <div class="section-label">Log de Automação</div>
+  <div class="log-area" id="auto-log">
+    <div class="log-entry"><span class="ts">[00:00]</span> Sistema de automação inicializado.</div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    $('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Load state
+let settings = { adBlocker: true, trackBlock: true, cookieBlock: true, themeActive: false, customCSS: '' };
+let apiKey = '';
+let schedulerInterval = null;
+
+chrome.storage.sync.get(['settings', 'blockedCount', 'apiKey'], data => {
+  if (data.settings) settings = { ...settings, ...data.settings };
+  if (data.apiKey) { apiKey = data.apiKey; $('api-key').value = apiKey; }
+  $('toggle-ads').checked = settings.adBlocker !== false;
+  $('toggle-track').checked = settings.trackBlock !== false;
+  $('toggle-cookies').checked = settings.cookieBlock !== false;
+  $('toggle-theme').checked = settings.themeActive === true;
+  if (settings.customCSS) $('custom-css').value = settings.customCSS;
+  updateCount(data.blockedCount || 0);
+});
+
+// Current site
+chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+  if (tabs[0]) {
+    try {
+      const url = new URL(tabs[0].url);
+      $('current-site').textContent = url.hostname.replace('www.', '').slice(0, 22);
+    } catch(e) {}
+  }
+});
+
+function updateCount(n) {
+  $('blocked-count').textContent = n.toLocaleString('pt-BR');
+  $('blocked-mini').textContent = n.toLocaleString('pt-BR');
+}
+
+chrome.runtime.sendMessage({ type: 'GET_STATS' }, res => {
+  if (res) updateCount(res.blockedCount || 0);
+});
+
+// Toggles
+function saveSettings() {
+  chrome.storage.sync.set({ settings });
+  chrome.runtime.sendMessage({ type: 'UPDATE_SETTINGS', settings });
+}
+
+$('toggle-ads').addEventListener('change', e => { settings.adBlocker = e.target.checked; saveSettings(); });
+$('toggle-track').addEventListener('change', e => { settings.trackBlock = e.target.checked; saveSettings(); });
+$('toggle-cookies').addEventListener('change', e => { settings.cookieBlock = e.target.checked; saveSettings(); });
+$('toggle-theme').addEventListener('change', e => { settings.themeActive = e.target.checked; saveSettings(); });
+
+$('api-key').addEventListener('change', e => {
+  apiKey = e.target.value.trim();
+  chrome.storage.sync.set({ apiKey });
+});
+
+// Pick element to block
+$('btn-pick-element').addEventListener('click', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'PICK_ELEMENT_TO_BLOCK' });
+    window.close();
+  });
+});
+
+// AI Chat
+const chatArea = $('chat-area');
+function addMsg(text, type) {
+  const div = document.createElement('div');
+  div.className = 'msg msg-' + type;
+  div.textContent = text;
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function sendChat() {
+  const input = $('chat-input');
+  const prompt = input.value.trim();
+  if (!prompt) return;
+  addMsg(prompt, 'user');
+  input.value = '';
+  const key = apiKey || $('api-key').value;
+  if (!key) { addMsg('Configure sua API Key na aba IA ↑', 'system'); return; }
+  addMsg('Pensando...', 'system');
+  chrome.runtime.sendMessage({ type: 'AI_QUERY', prompt, apiKey: key }, res => {
+    const last = chatArea.querySelector('.msg-system:last-child');
+    if (last) last.remove();
+    if (res.error) addMsg('Erro: ' + res.error, 'system');
+    else addMsg(res.response, 'ai');
+  });
+}
+
+$('btn-ask').addEventListener('click', sendChat);
+$('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+document.querySelectorAll('[data-quick]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $('chat-input').value = btn.dataset.quick;
+    document.querySelector('.tab[data-tab="ai"]').click();
+    sendChat();
+  });
+});
+
+// Theme selector
+document.querySelectorAll('.theme-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    settings.selectedTheme = opt.dataset.theme;
+    saveSettings();
+  });
+});
+
+// Apply CSS
+$('btn-apply-css').addEventListener('click', () => {
+  const css = $('custom-css').value;
+  settings.customCSS = css;
+  settings.themeActive = true;
+  $('toggle-theme').checked = true;
+  saveSettings();
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'INJECT_CSS', css });
+  });
+});
+
+// Bots
+const bots = {
+  'bot-autofill': { label: 'AutoFill', active: false, statusId: 'status-autofill' },
+  'bot-scroll': { label: 'Scroll', active: false, statusId: 'status-scroll' },
+  'bot-monitor': { label: 'Monitor', active: false, statusId: 'status-monitor' },
+  'bot-clicker': { label: 'Clicker', active: false, statusId: 'status-clicker' }
+};
+function botLog(msg, ok = true) {
+  const log = $('bot-log');
+  const t = new Date().toTimeString().slice(0,5);
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="ts">[${t}]</span> <span class="${ok ? 'ok' : 'err'}">${msg}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+Object.keys(bots).forEach(id => {
+  $(id).addEventListener('click', () => {
+    const bot = bots[id];
+    bot.active = !bot.active;
+    const statusEl = $(bot.statusId);
+    if (bot.active) {
+      statusEl.textContent = 'ATIVO';
+      statusEl.className = 'bot-status active';
+      botLog(`${bot.label} Bot iniciado`);
+    } else {
+      statusEl.textContent = 'PARADO';
+      statusEl.className = 'bot-status idle';
+      botLog(`${bot.label} Bot parado`, false);
+    }
+  });
+});
+
+// Automation buttons
+function autoLog(msg, ok = true) {
+  const log = $('auto-log');
+  const t = new Date().toTimeString().slice(0,5);
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="ts">[${t}]</span> <span class="${ok ? 'ok' : 'err'}">${msg}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+function execInTab(func) {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func });
+  });
+}
+$('run-scroll').addEventListener('click', () => {
+  execInTab(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+  autoLog('Rolagem até o final executada');
+});
+$('run-print').addEventListener('click', () => {
+  execInTab(() => window.print());
+  autoLog('Diálogo de impressão aberto');
+});
+$('run-readmode').addEventListener('click', () => {
+  execInTab(() => {
+    const style = document.getElementById('nexus-readmode');
+    if (style) { style.remove(); return; }
+    const s = document.createElement('style');
+    s.id = 'nexus-readmode';
+    s.textContent = `body{max-width:720px!important;margin:40px auto!important;padding:0 20px!important;font-family:Georgia,serif!important;font-size:18px!important;line-height:1.8!important;color:#1a1a1a!important;background:#faf9f7!important}header,footer,nav,aside,[class*="sidebar"],[class*="ad"],[id*="ad"]{display:none!important}`;
+    document.head.appendChild(s);
+  });
+  autoLog('Modo leitura ativado/desativado');
+});
+$('run-zoomin').addEventListener('click', () => {
+  execInTab(() => document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) + 0.1).toFixed(1));
+  autoLog('Zoom aumentado');
+});
+$('run-copy-all').addEventListener('click', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      func: () => navigator.clipboard.writeText(document.body.innerText)
+    });
+  });
+  autoLog('Todo texto copiado para área de transferência');
+});
+$('run-screenshot').addEventListener('click', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.tabs.captureVisibleTab(tabs[0].windowId, { format: 'png' }, url => {
+      const a = document.createElement('a');
+      a.href = url; a.download = 'nexus-screenshot.png'; a.click();
+    });
+  });
+  autoLog('Screenshot salvo');
+});
+
+// Scheduler
+$('btn-schedule').addEventListener('click', () => {
+  const action = $('auto-action').value;
+  const interval = parseInt($('auto-interval').value) * 1000;
+  if (!action) { autoLog('Selecione uma ação primeiro', false); return; }
+  $('btn-schedule').style.display = 'none';
+  $('btn-stop-schedule').style.display = 'block';
+  autoLog(`Agendamento iniciado: ${action} a cada ${interval/1000}s`);
+  schedulerInterval = setInterval(() => {
+    if (action === 'scroll') execInTab(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+    if (action === 'refresh') chrome.tabs.query({ active: true, currentWindow: true }, tabs => chrome.tabs.reload(tabs[0].id));
+    if (action === 'screenshot') $('run-screenshot').click();
+    autoLog(`Ação agendada executada: ${action}`);
+  }, interval);
+});
+$('btn-stop-schedule').addEventListener('click', () => {
+  clearInterval(schedulerInterval);
+  schedulerInterval = null;
+  $('btn-schedule').style.display = 'block';
+  $('btn-stop-schedule').style.display = 'none';
+  autoLog('Agendamento parado', false);
+});
+</script>
+</body>
+</html>
