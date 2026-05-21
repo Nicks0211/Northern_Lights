@@ -1,4 +1,150 @@
-#nexus-ai-floater input:focus {
-  border-color: #7C3AED !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
+#nexus-panel {
+  position: fixed;
+
+  top: 100px;
+  right: 30px;
+
+  width: 370px;
+  height: 520px;
+
+  background: rgba(15,15,25,0.95);
+
+  border: 1px solid rgba(168,85,247,0.3);
+
+  border-radius: 18px;
+
+  z-index: 999999999;
+
+  backdrop-filter: blur(18px);
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow:
+    0 0 30px rgba(168,85,247,0.3);
+
+  font-family: Arial, sans-serif;
+}
+
+#nexus-header {
+  height: 60px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(168,85,247,0.25),
+    rgba(124,58,237,0.15)
+  );
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 18px;
+
+  color: white;
+
+  cursor: move;
+}
+
+#nexus-title {
+  font-size: 15px;
+
+  font-weight: bold;
+
+  letter-spacing: 2px;
+
+  color: #c084fc;
+}
+
+#nexus-close {
+  width: 30px;
+  height: 30px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: rgba(255,255,255,0.1);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+#nexus-content {
+  flex: 1;
+
+  padding: 15px;
+
+  overflow-y: auto;
+
+  color: white;
+}
+
+#nexus-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nexus-msg {
+  padding: 12px;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.nexus-user {
+  background: rgba(168,85,247,0.2);
+}
+
+.nexus-ai {
+  background: rgba(255,255,255,0.06);
+}
+
+#nexus-bottom {
+  display: flex;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+#nexus-input {
+  flex: 1;
+
+  background: rgba(255,255,255,0.08);
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 12px;
+
+  color: white;
+
+  outline: none;
+}
+
+#nexus-send {
+  width: 50px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #7c3aed;
+
+  color: white;
+
+  cursor: pointer;
 }
